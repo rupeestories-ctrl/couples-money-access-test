@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>"Can You Both Access the Money?" Test — r/RupeeStories</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:        #0F1221;
+    --navy-card:   #1A1F35;
+    --navy-border: rgba(255,255,255,0.08);
+    --cream:       #F7F3EE;
+    --cream-dark:  #EDE6DA;
+    --gold:        #C9922A;
+    --gold-light:  #E8B45A;
+    --gold-pale:   #FEF3E2;
+    --ink:         #1A1208;
+    --ink-mid:     #4A3728;
+    --ink-light:   #7A6558;
+    --red:         #C0392B;
+    --red-pale:    #FDECEA;
+    --amber:       #B7791F;
+    --amber-pale:  #FEFCE8;
+    --green:       #1E7A4A;
+    --green-pale:  #E8F5EE;
+    --border:      #DDD0BE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 56px 24px 52px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,146,42,0.4), transparent);
+  }
+
+  .hero-brand {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(247,243,238,0.45);
+    letter-spacing: 0.04em;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .hero-brand::before { content: '↗'; font-size: 11px; }
+
+  .hero h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #F7F3EE;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .hero-meta {
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(247,243,238,0.55);
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+  .hero-meta span { margin: 0 10px; opacity: 0.3; }
+
+  .hero-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(247,243,238,0.7);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 100px;
+    letter-spacing: 0.01em;
+  }
+  .pill-icon { font-size: 13px; }
+
+  /* ── MAIN LAYOUT ── */
+  .layout {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  /* ── STICKY SCORE PANEL ── */
+  .score-panel {
+    position: sticky;
+    top: 24px;
+  }
+  .score-panel-card {
+    background: var(--navy-card);
+    border-radius: 16px;
+    padding: 28px 24px;
+    border: 1px solid var(--navy-border);
+  }
+  .panel-live-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .panel-live-denom {
+    font-size: 22px;
+    color: rgba(247,243,238,0.3);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+  .panel-live-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(247,243,238,0.35);
+    margin-bottom: 16px;
+  }
+  .panel-progress-bar-wrap {
+    background: rgba(255,255,255,0.08);
+    border-radius: 100px;
+    height: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .panel-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .panel-count {
+    font-size: 12px;
+    color: rgba(247,243,238,0.4);
+    font-weight: 400;
+  }
+  .panel-breakdown {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--navy-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+  }
+  .pb-label { display: flex; align-items: center; gap: 6px; color: rgba(247,243,238,0.5); }
+  .pb-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .pb-dot.yes { background: var(--green); }
+  .pb-dot.ns  { background: var(--amber); }
+  .pb-dot.no  { background: var(--red); }
+  .pb-val { font-weight: 600; color: rgba(247,243,238,0.8); }
+
+  /* ── QUESTIONS COLUMN ── */
+  .questions-col {}
+
+  .cat-group { margin-bottom: 8px; }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    margin-bottom: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+  .question-card:hover { border-color: var(--gold); box-shadow: 0 2px 12px rgba(201,146,42,0.1); }
+  .question-card.answered-yes { border-color: var(--green); }
+  .question-card.answered-ns  { border-color: var(--amber); }
+  .question-card.answered-no  { border-color: var(--red); }
+
+  .q-top {
+    padding: 20px 20px 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .q-num-badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-light);
+    letter-spacing: 0.05em;
+    min-width: 36px;
+    padding-top: 1px;
+  }
+  .answered-yes .q-num-badge { color: var(--green); }
+  .answered-ns  .q-num-badge { color: var(--amber); }
+  .answered-no  .q-num-badge { color: var(--red); }
+
+  .q-body { flex: 1; }
+  .q-cat-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    background: var(--cream-dark);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .q-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .q-sub {
+    font-size: 13px;
+    color: var(--ink-light);
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .q-footer {
+    border-top: 1px solid #F0E8DC;
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    background: #FDFAF6;
+  }
+  .btn-ans {
+    flex: 1;
+    padding: 8px 6px;
+    border-radius: 7px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-yes { background: var(--green-pale); color: var(--green); border-color: rgba(30,122,74,0.2); }
+  .btn-yes:hover, .btn-yes.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .btn-ns  { background: var(--amber-pale); color: var(--amber); border-color: rgba(183,121,31,0.2); }
+  .btn-ns:hover, .btn-ns.active   { background: var(--amber); color: #fff; border-color: var(--amber); }
+  .btn-no  { background: var(--red-pale);   color: var(--red);   border-color: rgba(192,57,43,0.2); }
+  .btn-no:hover, .btn-no.active   { background: var(--red);   color: #fff; border-color: var(--red); }
+
+  /* ── SCORE RESULTS (replaces checklist after all answered) ── */
+  #score-section { display: none; }
+
+  .result-hero {
+    background: var(--navy-card);
+    border-radius: 16px;
+    padding: 36px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    border: 1px solid var(--navy-border);
+    position: relative;
+    overflow: hidden;
+  }
+  .result-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 110%, rgba(201,146,42,0.25), transparent 65%);
+  }
+  .result-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; position: relative; }
+  .result-number  { font-family: 'Playfair Display', serif; font-size: 86px; font-weight: 900; color: var(--gold-light); line-height: 1; position: relative; }
+  .result-denom   { font-size: 34px; color: rgba(247,243,238,0.3); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .result-grade   { font-family: 'Playfair Display', serif; font-size: 24px; font-style: italic; color: #F7F3EE; margin: 8px 0 12px; position: relative; }
+  .result-verdict { font-size: 14px; color: rgba(247,243,238,0.6); max-width: 440px; margin: 0 auto; line-height: 1.7; position: relative; font-weight: 300; }
+  .result-pills   { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+  .rpill { padding: 5px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+  .rpill.yes { background: rgba(30,122,74,0.25);  color: #6ee7a8; }
+  .rpill.ns  { background: rgba(183,121,31,0.25); color: #fcd34d; }
+  .rpill.no  { background: rgba(192,57,43,0.25);  color: #fca5a5; }
+
+  .gap-list { margin-bottom: 24px; }
+  .gap-list-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .gap-list-sub   { font-size: 13px; color: var(--ink-light); margin-bottom: 16px; }
+
+  .gap-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 15px 16px; border-radius: 8px; margin-bottom: 10px;
+    animation: fadeUp 0.35s ease forwards; opacity: 0;
+  }
+  .gap-item.type-no { background: var(--red-pale);   border: 1px solid rgba(192,57,43,0.15); border-left: 4px solid var(--red); }
+  .gap-item.type-ns { background: var(--amber-pale); border: 1px solid rgba(183,121,31,0.15); border-left: 4px solid var(--amber); }
+  .gap-item:nth-child(1){animation-delay:.04s}.gap-item:nth-child(2){animation-delay:.08s}
+  .gap-item:nth-child(3){animation-delay:.12s}.gap-item:nth-child(4){animation-delay:.16s}
+  .gap-item:nth-child(5){animation-delay:.20s}.gap-item:nth-child(6){animation-delay:.24s}
+  .gap-item:nth-child(7){animation-delay:.28s}.gap-item:nth-child(8){animation-delay:.32s}
+  .gap-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .gap-text strong { font-size: 14px; font-weight: 600; display: block; margin-bottom: 3px; }
+  .gap-item.type-no .gap-text strong { color: var(--red); }
+  .gap-item.type-ns .gap-text strong { color: var(--amber); }
+  .gap-text p { font-size: 13px; color: var(--ink-mid); line-height: 1.55; }
+
+  .all-pass-msg { background: var(--green-pale); border: 1px solid rgba(30,122,74,0.25); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; }
+  .all-pass-msg .em { font-size: 32px; margin-bottom: 8px; }
+  .all-pass-msg p   { font-size: 15px; color: var(--green); font-weight: 600; }
+  .all-pass-msg small { font-size: 13px; color: var(--ink-light); }
+
+  .share-box { background: var(--gold-pale); border: 1px solid rgba(201,146,42,0.25); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 12px; }
+  .share-box p { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; color: var(--ink); margin-bottom: 4px; }
+  .share-box small { font-size: 13px; color: var(--ink-light); display: block; margin-bottom: 16px; }
+  .btn-share { background: var(--navy); color: #F7F3EE; border: none; padding: 12px 28px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.02em; }
+  .btn-share:hover { opacity: 0.85; }
+
+  .btn-retake { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink-light); cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+  .btn-retake:hover { border-color: var(--ink-light); color: var(--ink); }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--ink-light); border-top: 1px solid var(--border); }
+  .footer a { color: var(--gold); text-decoration: none; font-weight: 500; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--navy); color: #F7F3EE; font-size: 13px; font-weight: 500; padding: 10px 20px; border-radius: 100px; opacity: 0; pointer-events: none; transition: all 0.2s; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    .score-panel { position: static; margin-bottom: 0; }
+    .score-panel-card { background: var(--navy-card); border-radius: 0; border-left: none; border-right: none; display: flex; align-items: center; gap: 24px; padding: 16px 20px; }
+    .panel-live-number { font-size: 40px; margin-bottom: 0; }
+    .panel-live-label { margin-bottom: 4px; }
+    .panel-breakdown { display: none; }
+    .panel-right { flex: 1; }
+    .layout { padding: 20px 16px 60px; }
+    .q-title { font-size: 15px; }
+    .result-number { font-size: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-brand">r/RupeeStories</div>
+  <h1><em>"Can You Both Access<br>the Money?"</em> Test</h1>
+  <div class="hero-meta">
+    10 questions <span>·</span> ~3 minutes <span>·</span> Score out of 10
+  </div>
+  <div class="hero-pills">
+    <span class="pill"><span class="pill-icon">🔒</span> No login</span>
+    <span class="pill"><span class="pill-icon">🙈</span> No data collected</span>
+    <span class="pill"><span class="pill-icon">🌏</span> US · Canada · UK · UAE · Australia</span>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- STICKY LEFT PANEL -->
+  <aside class="score-panel">
+    <div class="score-panel-card">
+      <div>
+        <div class="panel-live-label">Live Score</div>
+        <div class="panel-live-number" id="panel-score">0<span class="panel-live-denom">/10</span></div>
+      </div>
+      <div class="panel-right" style="flex:1">
+        <div class="panel-progress-bar-wrap">
+          <div class="panel-progress-bar" id="panel-bar"></div>
+        </div>
+        <div class="panel-count" id="panel-count">Start with Question 1 · 0%</div>
+        <div class="panel-breakdown" id="panel-breakdown">
+          <div class="pb-row"><span class="pb-label"><span class="pb-dot yes"></span>Yes</span><span class="pb-val" id="pb-yes">0</span></div>
+          <div class="pb-row"><span class="pb-label"><span class="pb-dot ns"></span>Not sure</span><span class="pb-val" id="pb-ns">0</span></div>
+          <div class="pb-row"><span class="pb-label"><span class="pb-dot no"></span>No</span><span class="pb-val" id="pb-no">0</span></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- QUESTIONS / RESULTS -->
+  <main>
+    <div id="checklist"></div>
+
+    <div id="score-section">
+      <div class="result-hero">
+        <div class="result-eyebrow">Your Result</div>
+        <div class="result-number" id="result-num">—<span class="result-denom">/10</span></div>
+        <div class="result-grade"  id="result-grade">—</div>
+        <div class="result-verdict" id="result-verdict">—</div>
+        <div class="result-pills"  id="result-pills"></div>
+      </div>
+
+      <div class="gap-list" id="gap-list">
+        <div class="gap-list-title">Where you have gaps 👇</div>
+        <div class="gap-list-sub">These are the things that could freeze your family's finances.</div>
+        <div id="gap-items"></div>
+      </div>
+
+      <div class="share-box">
+        <p>"Tag your spouse. Ask them to take it too."</p>
+        <small>Share your score on r/rupeestories — see where other NRI couples are failing.</small>
+        <button class="btn-share" onclick="copyScore()">Copy My Score to Share</button>
+      </div>
+      <button class="btn-retake" onclick="retake()">↩ Retake the test</button>
+    </div>
+  </main>
+
+</div>
+
+<footer class="footer">
+  Built by <a href="https://www.reddit.com/r/rupeestories" target="_blank">r/RupeeStories</a> ·
+  <a href="https://rupeestories.substack.com" target="_blank">Substack</a>
+</footer>
+
+<div class="toast" id="toast">Score copied! Paste it on Reddit 🙌</div>
+
+<script>
+const questions = [
+  {
+    id: 1, category: "🗺 Account Map",
+    title: "Shared map of all accounts",
+    sub: "If something happened tonight, could your spouse list every major account in both countries — salary accounts, NRE/NRO, brokerage, 401k/IRA, EPF, Indian MFs, company stock, crypto, PPF, insurance cash value, FDs — without asking anyone else?",
+    failLabel: "No shared account map",
+    failFix: "One Google Doc or sealed envelope. Account name → institution → approx. value → login method. The act of writing it is the exercise. Update once a year."
+  },
+  {
+    id: 2, category: "🔑 Emergency Logins",
+    title: "Emergency logins for critical accounts",
+    sub: "Does your spouse have a practical way to log in to at least the \"must access in 48 hours\" accounts — salary account, bill-paying account, primary credit card, emergency savings, broker, one India account — via password manager, shared passcodes, or documented recovery steps?",
+    failLabel: "No emergency login access",
+    failFix: "Set up a shared 1Password or Bitwarden family vault. One 2-hour session. Every critical account. The 48-hour list is the starting point, not the finish line."
+  },
+  {
+    id: 3, category: "📋 Nominations",
+    title: "Updated nominations on all Indian assets",
+    sub: "Are nominees updated for all key Indian assets — bank accounts, Demat, mutual funds, PPF, EPF, life insurance, home loan, property records — and clearly noted in one place?",
+    failLabel: "India nominations not updated / not documented",
+    failFix: "Log in to each account this week. SEBI now requires MF/demat nominations — unverified = frozen. That EPF nominee you set at age 23? Probably still your parents. 10 minutes per account to fix."
+  },
+  {
+    id: 4, category: "🏦 Joint Accounts",
+    title: "At least one joint, liquid account in each country",
+    sub: "Do you have at least one actively used joint account or card per country where salary or regular money flows in, and the other spouse can pay bills today — without touching legal paperwork?",
+    failLabel: "No usable joint account in one or both countries",
+    failFix: "Add spouse as joint holder on your primary US checking account. For India: open a joint NRE/NRO savings account — most banks allow it online now. Single highest-leverage fix on this list."
+  },
+  {
+    id: 5, category: "📜 Power of Attorney",
+    title: "Power of Attorney for India (if you live abroad)",
+    sub: "If the India-facing spouse is abroad, is there a valid, attested POA that lets the other spouse — or a trusted person — operate Indian bank accounts, manage property, and sign basic paperwork without a court case?",
+    failLabel: "No valid India POA",
+    failFix: "Draft a Special or General POA through an Indian advocate. Notarize + apostille from the US. Budget ₹5,000–15,000 and ~2 weeks. This one document unlocks everything else in India."
+  },
+  {
+    id: 6, category: "📝 Will",
+    title: "Basic will in every relevant country",
+    sub: "Do you both have at least a simple, signed will covering assets in each jurisdiction — one in the US, one in India — with clear executors and guardians? And do both of you know where those documents physically are right now?",
+    failLabel: "No will in one or both countries",
+    failFix: "US: Trust & Will or LegalZoom (~$100, one evening). India: registered will through a local advocate (~₹3,000–5,000). Dying intestate across two countries means two different inheritance laws. Don't let that be the plan."
+  },
+  {
+    id: 7, category: "🛡 Term Cover",
+    title: "Term life cover that actually replaces income",
+    sub: "If the main earner dies, is there term cover large enough to clear all loans and cover at least 10–15 years of basic family expenses — including school fees and one major life goal like college or moving back?",
+    failLabel: "Cover insufficient or spouse can't claim it",
+    failFix: "Run the math: loans + (annual spend × 12). That's your floor. Then check: (1) Is employer group cover portable post-layoff? (2) Does your spouse have the policy number and know how to file a claim?"
+  },
+  {
+    id: 8, category: "📄 The One-Pager",
+    title: "\"If something happens to me\" note exists",
+    sub: "Do you have a single, human-readable document your spouse could open and immediately see: what you own, where to find logins, who to call (CA/CPA, lawyer, key relatives), and the top 3–5 immediate steps?",
+    failLabel: "No \"if something happens\" document",
+    failFix: "One page. Four sections: What I own. How to log in. Who to call. What to do first. Leave it with the will. Update it once a year on your anniversary. This document is worth more than most estate plans."
+  },
+  {
+    id: 9, category: "🧘 3-Month Continuity",
+    title: "Spouse can pay 3 months of expenses without you",
+    sub: "If you disappeared on a work trip tomorrow — phone lost, no calls — can your spouse pay rent/EMI, school fees, SIPs/401k, utilities, and insurance premiums, and access at least 3 months of living expenses, entirely on their own?",
+    failLabel: "Spouse can't run finances independently for 90 days",
+    failFix: "Write one document: monthly auto-pays (flag which need manual action), account to draw from, EMI dates, SIP amounts. Then fund a joint account with 3 months of expenses. That buffer is the difference between stressful and catastrophic."
+  },
+  {
+    id: 10, category: "🌏 Cross-Border Tax",
+    title: "Cross-border tax and paperwork \"owner\" identified",
+    sub: "Do you have clarity on who files taxes in each country, who knows how to report foreign assets (FBAR/FATCA forms, RNOR nuances), and is your go-to professional in each country named with their contact written down somewhere?",
+    failLabel: "No cross-border tax clarity or named professional",
+    failFix: "Write down: US CPA name + contact. India CA name + contact. Key deadlines (Apr 15, July 31). Where FBAR is filed. What RNOR means if you return. Even a rough note beats nothing — most NRI families have no one who knows all of this."
+  }
+];
+
+const SCORE   = { yes: 1, ns: 0.5, no: 0 };
+const ICONS   = { yes: '✓', ns: '?',  no: '✗' };
+const CLASSES = { yes: 'answered-yes', ns: 'answered-ns', no: 'answered-no' };
+
+const grades = [
+  { min: 9.5, label: "Battle-Ready 🏆",    text: "Rare. Genuinely rare. Your family can weather almost anything financially. Share this with the community — others need to see what this looks like." },
+  { min: 8,   label: "Almost There 💪",     text: "Solid foundation. You've thought about this more than 90% of NRI couples. Now fix those last gaps — they tend to be the ones that bite hardest in a real emergency." },
+  { min: 6,   label: "Work in Progress ⚠️", text: "The big stuff is there, but the gaps are real. One medical emergency or unexpected trip could freeze things. Pick the top 2 fails and fix them this month." },
+  { min: 4,   label: "Fragile 🔴",          text: "You're one unexpected event away from a financial crisis for your family. Not to scare you — but to start a conversation with your spouse tonight." },
+  { min: 0,   label: "Exposed 🚨",          text: "Most NRI couples land here. The good news: every single item is fixable in 30–60 days. You just needed to see it written down." }
+];
+
+let answers = {};
+
+function raw() { return Object.values(answers).reduce((s,v)=>s+SCORE[v],0); }
+function count(k) { return Object.values(answers).filter(v=>v===k).length; }
+
+function renderChecklist() {
+  const c = document.getElementById('checklist');
+  c.innerHTML = '';
+  questions.forEach(q => {
+    const ans = answers[q.id];
+    const card = document.createElement('div');
+    card.className = 'question-card' + (ans ? ` ${CLASSES[ans]}` : '');
+    card.id = `card-${q.id}`;
+    card.innerHTML = `
+      <div class="q-top">
+        <div class="q-num-badge">${String(q.id).padStart(2,'0')} / 10</div>
+        <div class="q-body">
+          <div class="q-cat-label">${q.category}</div>
+          <div class="q-title">${q.title}</div>
+          <div class="q-sub">${q.sub}</div>
+        </div>
+      </div>
+      <div class="q-footer">
+        <button class="btn-ans btn-yes${ans==='yes'?' active':''}" onclick="answer(${q.id},'yes',event)">✓ Yes</button>
+        <button class="btn-ans btn-ns${ans==='ns'?' active':''}"   onclick="answer(${q.id},'ns',event)">~ Not sure</button>
+        <button class="btn-ans btn-no${ans==='no'?' active':''}"   onclick="answer(${q.id},'no',event)">✗ No</button>
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+function answer(id, val, e) {
+  e.stopPropagation();
+  answers[id] = val;
+  const card = document.getElementById(`card-${id}`);
+  card.className = `question-card ${CLASSES[val]}`;
+  card.querySelector('.q-num-badge').style.color = val==='yes' ? 'var(--green)' : val==='ns' ? 'var(--amber)' : 'var(--red)';
+  card.querySelectorAll('.btn-ans').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  updatePanel();
+  if (Object.keys(answers).length === questions.length) setTimeout(showScore, 500);
+}
+
+function updatePanel() {
+  const done = Object.keys(answers).length;
+  const pct  = Math.round(done / questions.length * 100);
+  const sc   = Math.round(raw()*10)/10;
+  document.getElementById('panel-score').innerHTML = `${sc}<span class="panel-live-denom">/10</span>`;
+  document.getElementById('panel-bar').style.width = pct + '%';
+  document.getElementById('panel-count').textContent = done < questions.length
+    ? `${done} of ${questions.length} answered · ${pct}%`
+    : `All ${questions.length} answered`;
+  document.getElementById('pb-yes').textContent = count('yes');
+  document.getElementById('pb-ns').textContent  = count('ns');
+  document.getElementById('pb-no').textContent  = count('no');
+}
+
+function showScore() {
+  const sc   = Math.round(raw()*10)/10;
+  const g    = grades.find(x => sc >= x.min);
+  const yesN = count('yes'), nsN = count('ns'), noN = count('no');
+  const gaps = questions.filter(q => answers[q.id] !== 'yes');
+
+  document.getElementById('result-num').innerHTML = `${sc}<span class="result-denom">/10</span>`;
+  document.getElementById('result-grade').textContent   = g.label;
+  document.getElementById('result-verdict').textContent  = g.text;
+  document.getElementById('result-pills').innerHTML = `
+    <div class="rpill yes">✓ ${yesN} covered</div>
+    ${nsN>0?`<div class="rpill ns">~ ${nsN} not sure</div>`:''}
+    ${noN>0?`<div class="rpill no">✗ ${noN} failed</div>`:''}`;
+
+  const gi = document.getElementById('gap-items');
+  gi.innerHTML = '';
+  if (gaps.length === 0) {
+    document.getElementById('gap-list').innerHTML = `<div class="all-pass-msg"><div class="em">🏆</div><p>Perfect score — you passed everything.</p><small>Seriously impressive. Share this with your community.</small></div>`;
+  } else {
+    gaps.forEach((q,i)=>{
+      const t = answers[q.id];
+      const item = document.createElement('div');
+      item.className = `gap-item type-${t}`;
+      item.style.animationDelay = `${0.04*i}s`;
+      item.innerHTML = `
+        <div class="gap-icon">${t==='ns'?'⚠️':'🔴'}</div>
+        <div class="gap-text">
+          <strong>Q${q.id}: ${q.failLabel}${t==='ns'?' <span style="font-size:11px;font-weight:400">(not sure)</span>':''}</strong>
+          <p>${q.failFix}</p>
+        </div>`;
+      gi.appendChild(item);
+    });
+  }
+
+  document.getElementById('checklist').style.display = 'none';
+  const ss = document.getElementById('score-section');
+  ss.style.display = 'block';
+  setTimeout(()=>ss.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function copyScore() {
+  const sc   = Math.round(raw()*10)/10;
+  const g    = grades.find(x => sc >= x.min);
+  const gaps = questions.filter(q => answers[q.id] !== 'yes');
+  const lines = gaps.map(q=>`${answers[q.id]==='ns'?'~':'✗'} Q${q.id}: ${q.failLabel}`).join('\n');
+  const text = `I scored ${sc}/10 on the NRI "Can You Both Access the Money?" test.\n\nGrade: ${g.label}\n\nMy gaps:\n${lines||'• None — perfect score 🏆'}\n\nTake it → rupeestories-ctrl.github.io/nri-couples-access-test\n\nr/rupeestories`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2800);
+  });
+}
+
+function retake() {
+  answers = {};
+  document.getElementById('score-section').style.display = 'none';
+  document.getElementById('checklist').style.display = 'block';
+  updatePanel();
+  renderChecklist();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderChecklist();
+updatePanel();
+</script>
+</body>
+</html>
